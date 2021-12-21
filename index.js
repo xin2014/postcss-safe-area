@@ -19,8 +19,7 @@ module.exports = () => {
   });
 
   const useConstantFunction = capabilities.some(capability => capability === 'a #1');
-  const useDefaultValue = capabilities.some(capability => capability === 'n');
-  if (!useConstantFunction && !useDefaultValue) {
+  if (!useConstantFunction) {
     return {
       postcssPlugin: 'postcss-safe-area'
     };
@@ -31,14 +30,6 @@ module.exports = () => {
   return {
     postcssPlugin: 'postcss-safe-area',
     Declaration (decl) {
-      // env(..., 1px) -> 1px
-      if (useDefaultValue) {
-        const fallback = decl.value.replace(expr, (match, param, defaultValue) => defaultValue || '0');
-        if (fallback !== decl.value) {
-          decl.cloneBefore({ value: fallback });
-        }
-      }
-
       // env(...) -> constant(...)
       if (useConstantFunction) {
         const fallback = decl.value.replace(expr, (match, param, defaultValue) => {
